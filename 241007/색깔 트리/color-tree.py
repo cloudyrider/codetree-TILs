@@ -72,7 +72,7 @@ for order in orders :
     elif order[0] == 400 : 
         value = 0
 
-        for node in nodes.value()
+        for node in nodes.valus()
             colors = set()
             node.get_value(colors)
             value += len(colors)**2
