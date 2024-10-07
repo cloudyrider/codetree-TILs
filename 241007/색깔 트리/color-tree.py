@@ -77,4 +77,4 @@ for order in orders :
             node.get_value(colors)
             value += len(colors)**2
         
-        prunt(value)
+        print(value)
