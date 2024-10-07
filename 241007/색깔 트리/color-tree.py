@@ -1,5 +1,5 @@
 import sys
-sys.setrecursionlimit(10000000)
+sys.setrecursionlimit(50001)
 
 n = int(input())
 
@@ -45,7 +45,7 @@ for order in orders:
             nodes[m_id] = node
         else:
             parent = nodes[p_id]
-            # p_id는 항상 이미 존재하는 노드라고 가정
+            # p_id는 항상 이미 존재하는 노드라고 가정하라고 문제에서 주어짐
             if parent.max_depth > 1:
                 nodes[m_id] = node
                 parent.add_child(node)
@@ -65,8 +65,7 @@ for order in orders:
     elif order[0] == 400: 
         value = 0
 
-        # 모든 노드에 대해 계산
-        for node in nodes.values():  # 수정: values()로 변경
+        for node in nodes.values(): 
             colors = set()
             node.get_value(colors)
             value += len(colors) ** 2
