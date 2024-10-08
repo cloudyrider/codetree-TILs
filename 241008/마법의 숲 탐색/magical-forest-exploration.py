@@ -5,7 +5,7 @@ for _ in range(K) :
     spirits.append(list(map(int, input().split())))
 
 world = [[0]*(C) for _ in range(R+3)]
-settled_spirits = dict()
+connected = dict()
 
 sum_answer = 0
 for c, d in spirits :
@@ -58,7 +58,8 @@ for c, d in spirits :
     if spirit_r < 4 :
         #world reset
         world = [[0]*(C) for _ in range(R+3)]
-        settled_spirits = dict()
+        connected = dict()
+        
         continue
 
     world[spirit_r][spirit_c] = 1
@@ -74,29 +75,42 @@ for c, d in spirits :
        |
        2
     """
-    candidates = [spirit_r+1]
 
-    if (spirit_r+3, spirit_c) in settled_spirits and direction == 2 :
-        candidates.append(settled_spirits[(spirit_r+3, spirit_c)])
+    connected[(spirit_r, spirit_c)] = [{(spirit_r, spirit_c)}, spirit_r+1]
+    max_val = spirit_r+1
+    connected_keys = {(spirit_r, spirit_c)}
 
-    if (spirit_r+2, spirit_c+1) in settled_spirits and (direction == 1 or direction == 2) :
-        candidates.append(settled_spirits[(spirit_r+2, spirit_c+1)])
-    if (spirit_r+1, spirit_c+2) in settled_spirits and (direction == 1 or direction == 2) :
-        candidates.append(settled_spirits[(spirit_r+1, spirit_c+2)])
-    if (spirit_r, spirit_c+3) in settled_spirits and direction == 1 :
-        candidates.append(settled_spirits[(spirit_r, spirit_c+3)])
+    for key, value in connected.items() :
+        if (spirit_r+3, spirit_c) in value[0] and direction == 2 :
+            connected_keys.add(key)
+            max_val = max(max_val, value[1])
+        if (spirit_r+2, spirit_c+1) in value[0] and (direction == 1 or direction == 2) :
+            connected_keys.add(key)
+            max_val = max(max_val, value[1])
+        if (spirit_r+1, spirit_c+2) in value[0] and (direction == 1 or direction == 2) :
+            connected_keys.add(key)
+            max_val = max(max_val, value[1])
+        if (spirit_r, spirit_c+3) in value[0] and direction == 1 :
+            connected_keys.add(key)
+            max_val = max(max_val, value[1])
+        if (spirit_r+2, spirit_c-1) in value[0] and (direction == 3 or direction == 2) :
+            connected_keys.add(key)
+            max_val = max(max_val, value[1])
+        if (spirit_r+1, spirit_c-2) in value[0] and (direction == 3 or direction == 2) :
+            connected_keys.add(key)
+            max_val = max(max_val, value[1])
+        if (spirit_r, spirit_c-3) in value[0] and direction == 3 :
+            connected_keys.add(key)
+            max_val = max(max_val, value[1])
 
-    if (spirit_r+2, spirit_c-1) in settled_spirits and (direction == 3 or direction == 2) :
-        candidates.append(settled_spirits[(spirit_r+2, spirit_c-1)])
-    if (spirit_r+1, spirit_c-2) in settled_spirits and (direction == 3 or direction == 2) :
-        candidates.append(settled_spirits[(spirit_r+1, spirit_c-2)])
-    if (spirit_r, spirit_c-3) in settled_spirits and direction == 3 :
-        candidates.append(settled_spirits[(spirit_r, spirit_c-3)])
+    if len(connected_keys) > 1 :
+        merged_key = connected_keys.pop()
+        for connected_key in connected_keys :
+            connected[merged_key][0].update(connected[connected_key][0])
+            del connected[connected_key]
+            connected[merged_key][1] = max_val
 
-    answer = max(candidates)
-    settled_spirits[(spirit_r, spirit_c)] = answer
-    #print(settled_spirits)
-    sum_answer += answer-2
-    #print(answer-2)
+    sum_answer += max_val
+    print(max_val-2)
 
 print(sum_answer)
