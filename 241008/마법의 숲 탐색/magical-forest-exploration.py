@@ -111,6 +111,6 @@ for c, d in spirits :
             connected[merged_key][1] = max_val
 
     sum_answer += max_val
-    print(max_val-2)
+    #print(max_val-2)
 
 print(sum_answer)
