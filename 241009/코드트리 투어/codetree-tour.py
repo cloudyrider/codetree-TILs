@@ -29,6 +29,7 @@ def dijkstra(dep, world):
     return dist
     
 for order in orders :
+    print(order)
     if order[0] == 100 :
         n, m = order[1], order[2]
         world = {i:set() for i in range(n)}
@@ -46,7 +47,8 @@ for order in orders :
 
     if order[0] == 300 :
         id_ = order[1]
-        del packages[id_]
+        if id_ in packages :
+            del packages[id_]
 
     if order[0] == 400 :
         max_income = -1
