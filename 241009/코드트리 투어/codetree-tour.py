@@ -60,6 +60,9 @@ for order in orders :
             if revenue - costs[dest] > max_income :
                 max_income = revenue - costs[dest]
                 that_id = id_
+            elif revenue - costs[dest] == max_income :
+                if that_id > id_ :
+                    that_id = id_
 
         if max_income > -1 :
             print(that_id)
