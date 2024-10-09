@@ -1,10 +1,3 @@
-#33번 오류
-
-
-#정답 : 21671
-#내 답 : 21697
-
-
 R, C, K = map(int, input().split())
 
 spirits = list()
@@ -60,21 +53,12 @@ for c, d in spirits :
             direction += 1
             direction %= 4
             continue
-
         break
-
-    #print(spirit_r-2, spirit_c+1, direction)
 
     if spirit_r < 4 :
         #골렘이 숲 내 안착 실패 시 숲 초기화
-
-        # with open("my_result_34_reset_id.txt", "a") as f:
-        #     f.write(f"{spirit_num} {world}\n")
-
-
         world = [[0]*(C) for _ in range(R+3)]
         directions = dict()
-
         continue
 
     world[spirit_r][spirit_c] = 1
@@ -98,7 +82,6 @@ for c, d in spirits :
     seen.add((spirit_r, spirit_c))
 
     while queue :
-        #print(queue)
         r, c, d = queue.pop(0)
         max_r = max(max_r, r+1)
 
@@ -127,10 +110,5 @@ for c, d in spirits :
                     seen.add((nr, nc))
 
     answer += max_r-2
-    #print(spirit_r-2, spirit_c+1, direction, max_r-2)
-    # with open("my_result_34.txt", "a") as f:
-    #     f.write(f"{spirit_r} {spirit_c} {direction} {max_r-2}\n")
-
-    #print(directions)
 
 print(answer)
