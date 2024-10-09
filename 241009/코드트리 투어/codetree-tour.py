@@ -1,111 +1,102 @@
+import heapq
+from collections import defaultdict
+import sys
+input = sys.stdin.readline
+
+INF = float('inf')
+
+class Package:
+    def __init__(self, id_, revenue, dest, profit):
+        self.id_ = id_
+        self.revenue = revenue
+        self.dest = dest
+        self.profit = profit
+    
+    def __lt__(self, other):  # min heap에서 self가 other보다 우선시되려면:
+        if self.profit == other.profit:
+            return self.id_ < other.id_ 
+        return self.profit > other.profit 
+
+def dijkstra(s, graph):
+    n = len(graph) 
+    dist = [INF] * n
+    dist[s] = 0
+    visited = [False] * n
+
+    for _ in range(n):
+        node = -1
+        min_dist = INF
+        for j in range(n):
+            if not visited[j] and min_dist > dist[j]:
+                min_dist = dist[j]
+                node = j
+        if node == -1:
+            break
+        visited[node] = True
+        for j in range(n):
+            if graph[node][j] != INF and dist[j] > dist[node] + graph[node][j]:
+                dist[j] = dist[node] + graph[node][j]
+
+    return dist
+
 Q = int(input())
 
-orders = []
-for _ in range(Q) :
-    orders.append(list(map(int, input().split())))
-
-
-import copy
-
-cache = {}
-
-def dijkstra(deps, dests, world):
-
-    costs = {}
-    
-    for dep in deps:
-        dests_ = dests.copy() 
-        temp_costs = [float('inf')] * len(world)
-        temp_costs[dep] = 0
-        visited = [False] * len(world)
-
-        for _ in range(len(world)):
-            min_cost = float('inf')
-            which_min = -1
-
-            for i in range(len(world)):
-                if not visited[i] and temp_costs[i] < min_cost:
-                    min_cost = temp_costs[i]
-                    which_min = i
-            
-            if which_min == -1:
-                break
-
-            visited[which_min] = True
-            if which_min in dests_:
-                dests_.remove(which_min)
-
-            if not dests_:
-                break
-
-            for nei, cost in world[which_min]:
-                if temp_costs[which_min] + cost < temp_costs[nei]:
-                    temp_costs[nei] = temp_costs[which_min] + cost
-
-        costs[dep] = temp_costs
-
-    return costs
-
-
-dests = []
-
-for order in orders :
-    if order[0] == 100 :
-        n, m = order[1], order[2]
-        world = {i:set() for i in range(n)}
-        idx = 3
-        for i in range(m) :
-            v, u, w = order[idx], order[idx+1], order[idx+2]
-            world[v].add((u, w))
-            world[u].add((v, w))
-            idx += 3
-        break
-
-deps = set()
-deps.add(0)
-dests = set()
-
-for order in orders :
-    if order[0] == 200 :
-        dests.add(order[3])
-
-    elif order[0] == 500 :
-        deps.add(order[1])
-
-costs = dijkstra(deps, dests, world)
+queue = []
+id_exist = defaultdict(bool)
 dep = 0
-packages = {}
+started = True
 
-for order in orders :
+for _ in range(Q):
+    order = list(map(int, input().split()))
 
-    if order[0] == 200 :
-        id_, revenue, dest = order[1], order[2], order[3]
-        packages[id_] = (revenue, dest)
+    if order[0] == 100:
+        n = order[1]
+        m = order[2]
+        graph = [[INF] * n for _ in range(n)]
+        for i in range(n):
+            graph[i][i] = 0
+        for i in range(1, m + 1):
+            u, v, w = order[3 * i], order[3 * i + 1], order[3 * i + 2]
+            val = min(w, graph[u][v], graph[v][u])
+            graph[u][v] = val
+            graph[v][u] = val
+    
+    elif order[0] == 200:
+        if started:
+            dist = dijkstra(dep, graph) 
+            started = False
+        _, id_, revenue, dest = order
+        if not id_exist[id_]:  # 중복된 ID 방지
+            id_exist[id_] = True
+            profit = revenue - dist[dest]
+            package = Package(id_, revenue, dest, profit)
+            heapq.heappush(queue, package)
 
-    if order[0] == 300 :
+    elif order[0] == 300:
         id_ = order[1]
-        if id_ in packages :
-            del packages[id_]
-
-    if order[0] == 400 :
-        costs_from_dep_to = costs[dep]
-        max_income = -1
-        max_id = -1
-
-        for id_, value in packages.items() :
-            revenue, dest = value
-            income = revenue - costs_from_dep_to[dest]
-            if income > max_income :
-                max_income = income
-                max_id = id_
-            elif income == max_income :
-                max_id = min(id_, max_id)
-         
-        if max_income > -1 :
-            print(max_id)
-            del packages[max_id]
-        else :
+        id_exist[id_] = False  # 해당 ID의 패키지를 비활성화
+        # queue에는 패키지를 남겨두지만, 출력 시 체크하여 제외
+        
+    elif order[0] == 400:
+        #print([(package.id_, package.profit) for package in queue])
+        while queue:
+            priority = queue[0]
+            if priority.profit < 0:
+                print(-1)
+                break
+            heapq.heappop(queue)
+            id_ = priority.id_
+            if id_exist[id_]:
+                print(id_)
+                break
+        else: 
             print(-1)
-
-    if order[0] == 500 :
+    
+    elif order[0] == 500:
         dep = order[1]
+        dist = dijkstra(dep, graph) 
+
+        for package in queue:
+            if id_exist[package.id_]:  # 활성화된 패키지만 업데이트
+                package.profit = package.revenue - dist[package.dest]
+        heapq.heapify(queue)  # 다시 힙 정
