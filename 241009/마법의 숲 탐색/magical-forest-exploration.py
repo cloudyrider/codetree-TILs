@@ -95,31 +95,32 @@ for c, d in spirits :
         r, c, d = queue.pop(0)
         max_r = max(max_r, r+1)
 
-        if d == 0 :
+        if d%4 == 0 :
             for nr, nc in [(r-3, c), (r-2, c+1), (r-2, c-1), (r-1, c-2), (r-1, c+2)] :
                 if (nr, nc) in directions and (nr, nc) not in seen :
                     queue.append((nr, nc, directions[(nr, nc)]))
                     seen.add((nr, nc))
 
-        elif d == 1 :
+        elif d%4 == 1 :
             for nr, nc in [(r-2, c+1), (r-1, c+2), (r, c+3), (r+1, c+2), (r+2, c+1)] :
                 if (nr, nc) in directions and (nr, nc) not in seen :
                     queue.append((nr, nc, directions[(nr, nc)]))
                     seen.add((nr, nc))
 
-        elif d == 2 :
+        elif d%4 == 2 :
             for nr, nc in [(r+3, c), (r+2, c+1), (r+2, c-1), (r+1, c-2), (r+1, c+2)] :
                 if (nr, nc) in directions and (nr, nc) not in seen :
                     queue.append((nr, nc, directions[(nr, nc)]))
                     seen.add((nr, nc))
 
-        elif d == 4 :
+        elif d%4 == 3 :
             for nr, nc in [(r-2, c-1), (r-1, c-2), (r, c-3), (r+1, c-2), (r+2, c-1)] :
                 if (nr, nc) in directions and (nr, nc) not in seen :
                     queue.append((nr, nc, directions[(nr, nc)]))
                     seen.add((nr, nc))
 
     answer += max_r-2
-    #print(max_r)
+    #print(spirit_r-2, spirit_c+1, direction, max_r-2)
+    #print(directions)
 
 print(answer)
