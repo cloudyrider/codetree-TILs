@@ -29,7 +29,7 @@ def dijkstra(dep, world):
     return dist
     
 for order in orders :
-    print(order)
+    #print(order)
     if order[0] == 100 :
         n, m = order[1], order[2]
         world = {i:set() for i in range(n)}
