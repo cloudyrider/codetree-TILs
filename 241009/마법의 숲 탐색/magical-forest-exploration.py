@@ -16,8 +16,10 @@ directions = dict()
 
 answer = 0
 #정령이 골렘을 타고 내려옴
+spirit_num = 0 
 for c, d in spirits :
-    spirit_r = 2
+
+    spirit_r = 1
     spirit_c = c-1
     direction = d
 
@@ -65,9 +67,14 @@ for c, d in spirits :
 
     if spirit_r < 4 :
         #골렘이 숲 내 안착 실패 시 숲 초기화
+
+        # with open("my_result_34_reset_id.txt", "a") as f:
+        #     f.write(f"{spirit_num} {world}\n")
+
+
         world = [[0]*(C) for _ in range(R+3)]
         directions = dict()
-        
+
         continue
 
     world[spirit_r][spirit_c] = 1
@@ -121,6 +128,9 @@ for c, d in spirits :
 
     answer += max_r-2
     #print(spirit_r-2, spirit_c+1, direction, max_r-2)
+    # with open("my_result_34.txt", "a") as f:
+    #     f.write(f"{spirit_r} {spirit_c} {direction} {max_r-2}\n")
+
     #print(directions)
 
 print(answer)
