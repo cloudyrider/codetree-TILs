@@ -4,43 +4,48 @@ orders = []
 for _ in range(Q) :
     orders.append(list(map(int, input().split())))
 
-def dijkstra(deps, dests, world) :
-    costs = {}
 
-    for dep in deps :
-        dests_ = dests
+import copy
+
+cache = {}
+
+def dijkstra(deps, dests, world):
+
+    costs = {}
+    
+    for dep in deps:
+        dests_ = dests.copy() 
         temp_costs = [float('inf')] * len(world)
         temp_costs[dep] = 0
         visited = [False] * len(world)
 
-        for _ in range(len(world)) :
+        for _ in range(len(world)):
             min_cost = float('inf')
             which_min = -1
 
-            for i in range(len(world)) :
-                if not visited[i] :
-                    if temp_costs[i] < min_cost :
-                        min_cost = temp_costs[i]
-                        which_min = i
+            for i in range(len(world)):
+                if not visited[i] and temp_costs[i] < min_cost:
+                    min_cost = temp_costs[i]
+                    which_min = i
             
-            if which_min == -1 :
+            if which_min == -1:
                 break
-    
+
             visited[which_min] = True
-            if which_min in dests_ :
+            if which_min in dests_:
                 dests_.remove(which_min)
 
-            if not dests_ :
+            if not dests_:
                 break
-            
+
             for nei, cost in world[which_min]:
-                if nei != which_min : 
-                    if temp_costs[which_min] + cost < temp_costs[nei]:
-                        temp_costs[nei] = temp_costs[which_min] + cost
+                if temp_costs[which_min] + cost < temp_costs[nei]:
+                    temp_costs[nei] = temp_costs[which_min] + cost
 
         costs[dep] = temp_costs
 
     return costs
+
 
 dests = []
 
