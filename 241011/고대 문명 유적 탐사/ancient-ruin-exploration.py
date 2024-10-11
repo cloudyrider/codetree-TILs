@@ -53,6 +53,7 @@ class Candidate:
         dx = [0, 0, -1, 1]
         dy = [1, -1, 0, 0]
         valuable = 0
+        temporary_replace_coor = set()  # 임시로 좌표를 저장할 곳
 
         for x in range(5):
             for y in range(5):
@@ -60,6 +61,7 @@ class Candidate:
                     queue = deque([(x, y)])
                     seen[x][y] = True
                     group_size = 1  
+                    group_coor = [(x, y)]  # 그룹에 속한 좌표를 저장
 
                     while queue:
                         cx, cy = queue.popleft()
@@ -69,14 +71,16 @@ class Candidate:
                                 seen[nx][ny] = True
                                 queue.append((nx, ny))
                                 group_size += 1
-                                self.replace_coor.add((cy, -cx))  
-                                self.replace_coor.add((ny, -nx))  
+                                group_coor.append((nx, ny))  # 해당 좌표도 그룹에 추가
 
                     if group_size > 2:
-                        valuable += group_size 
+                        valuable += group_size
+                        for gx, gy in group_coor:
+                            temporary_replace_coor.add((gy, -gx))  # 그룹 크기가 충분히 크면 좌표 추가
+
+        self.replace_coor.update(temporary_replace_coor)  # 최종적으로 큰 그룹들만 추가
 
         return valuable
-
 
 def solve():
     K, M = map(int, input().split())
