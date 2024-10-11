@@ -86,6 +86,7 @@ def solve():
     K, M = map(int, input().split())
     graph = [list(map(int, input().split())) for _ in range(5)]
     wall_numbers = deque(map(int, input().split()))
+    answer = ''
 
     for _ in range(K):
         candidates = []
@@ -118,7 +119,11 @@ def solve():
             for ey, ex in replace_coor:
                 graph[-ex][ey] = wall_numbers.popleft()
             value += new_candidate.value
-        print(value)
+        if answer :
+            answer += ' '
+        answer += str(value)
+        return answer
 
 if __name__ == "__main__":
-    solve()
+    answer = solve()
+    print(answer)
