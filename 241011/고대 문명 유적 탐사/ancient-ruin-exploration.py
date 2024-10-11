@@ -118,7 +118,8 @@ def solve():
             for ey, ex in replace_coor:
                 graph[-ex][ey] = wall_numbers.popleft()
             value += new_candidate.value
-        print(value)
+        
+        sys.stdout.write(f"{value} ")
 
 if __name__ == "__main__":
     solve()
